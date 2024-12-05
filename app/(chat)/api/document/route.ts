@@ -19,7 +19,7 @@ export async function GET(request: Request) {
   if (!session || !session.user) {
     return new Response("Unauthorized", { status: 401 });
   }
-  if (!hasDb) {
+  if (!hasDb()) {
     return new Response("Not Found", { status: 404 });
   }
   const documents = await getDocumentsById({ id });
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
   const { content, title }: { content: string; title: string } = await request.json();
 
   if (session.user?.id) {
-    if (!hasDb) {
+    if (!hasDb()) {
       return Response.json(
         {
           id,
@@ -92,7 +92,7 @@ export async function PATCH(request: Request) {
   if (!session || !session.user) {
     return new Response("Unauthorized", { status: 401 });
   }
-  if (!hasDb) {
+  if (!hasDb()) {
     return new Response("Deleted", { status: 200 });
   }
   const documents = await getDocumentsById({ id });
