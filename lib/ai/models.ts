@@ -27,5 +27,4 @@ export const models: Array<Model> = [
     description: "Small model for fast, lightweight tasks",
   },
 ] as const;
-
 export const DEFAULT_MODEL_NAME: string = "grok-beta";
