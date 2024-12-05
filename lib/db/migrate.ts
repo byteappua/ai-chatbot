@@ -6,7 +6,13 @@ import postgres from "postgres";
 config({
   path: ".env.local",
 });
-
+export const hasDb = () => {
+  if (process.env.ENABLE_POSTGRES && process.env.ENABLE_POSTGRES === "false") {
+    console.error("ENABLE_POSTGRES is false");
+    return false;
+  }
+  return true;
+};
 const runMigrate = async () => {
   if (process.env.ENABLE_POSTGRES && process.env.ENABLE_POSTGRES === "false") {
     console.error("ENABLE_POSTGRES is false");

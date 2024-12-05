@@ -1,10 +1,11 @@
-import { compare } from 'bcrypt-ts';
-import NextAuth, { type User, type Session } from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
+import { compare } from "bcrypt-ts";
+import NextAuth, { type User, type Session } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 
-import { getUser } from '@/lib/db/queries';
+import { getUser } from "@/lib/db/queries";
+import { hasDb } from "@/lib/db/migrate";
 
-import { authConfig } from './auth.config';
+import { authConfig } from "./auth.config";
 
 interface ExtendedSession extends Session {
   user: User;
@@ -21,6 +22,12 @@ export const {
     Credentials({
       credentials: {},
       async authorize({ email, password }: any) {
+        if (!hasDb())
+          return {
+            id: 1,
+            email: "demo@qq.com",
+            password: "123456",
+          };
         const users = await getUser(email);
         if (users.length === 0) return null;
         // biome-ignore lint: Forbidden non-null assertion.
@@ -38,13 +45,7 @@ export const {
 
       return token;
     },
-    async session({
-      session,
-      token,
-    }: {
-      session: ExtendedSession;
-      token: any;
-    }) {
+    async session({ session, token }: { session: ExtendedSession; token: any }) {
       if (session.user) {
         session.user.id = token.id as string;
       }
