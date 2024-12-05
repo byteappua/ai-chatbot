@@ -1,21 +1,14 @@
-import type { JSONValue } from 'ai';
-import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
-import { useSWRConfig } from 'swr';
+import type { JSONValue } from "ai";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
+import { useSWRConfig } from "swr";
 
-import type { Suggestion } from '@/lib/db/schema';
+import type { Suggestion } from "@/lib/db/schema";
 
-import type { UIBlock } from './block';
-import { useUserMessageId } from '@/hooks/use-user-message-id';
+import type { UIBlock } from "./block";
+import { useUserMessageId } from "@/hooks/use-user-message-id";
 
 type StreamingDelta = {
-  type:
-    | 'text-delta'
-    | 'title'
-    | 'id'
-    | 'suggestion'
-    | 'clear'
-    | 'finish'
-    | 'user-message-id';
+  type: "text-delta" | "title" | "id" | "suggestion" | "clear" | "finish" | "user-message-id";
 
   content: string | Suggestion;
 };
@@ -28,9 +21,7 @@ export function useBlockStream({
   setBlock: Dispatch<SetStateAction<UIBlock>>;
 }) {
   const { mutate } = useSWRConfig();
-  const [optimisticSuggestions, setOptimisticSuggestions] = useState<
-    Array<Suggestion>
-  >([]);
+  const [optimisticSuggestions, setOptimisticSuggestions] = useState<Array<Suggestion>>([]);
 
   const { setUserMessageIdFromServer } = useUserMessageId();
 
@@ -48,39 +39,39 @@ export function useBlockStream({
 
     const delta = mostRecentDelta as StreamingDelta;
 
-    if (delta.type === 'user-message-id') {
+    if (delta.type === "user-message-id") {
       setUserMessageIdFromServer(delta.content as string);
       return;
     }
 
     setBlock((draftBlock) => {
       switch (delta.type) {
-        case 'id':
+        case "id":
           return {
             ...draftBlock,
             documentId: delta.content as string,
           };
 
-        case 'title':
+        case "title":
           return {
             ...draftBlock,
             title: delta.content as string,
           };
 
-        case 'text-delta':
+        case "text-delta":
           return {
             ...draftBlock,
             content: draftBlock.content + (delta.content as string),
             isVisible:
-              draftBlock.status === 'streaming' &&
+              draftBlock.status === "streaming" &&
               draftBlock.content.length > 200 &&
               draftBlock.content.length < 250
                 ? true
                 : draftBlock.isVisible,
-            status: 'streaming',
+            status: "streaming",
           };
 
-        case 'suggestion':
+        case "suggestion":
           setTimeout(() => {
             setOptimisticSuggestions((currentSuggestions) => [
               ...currentSuggestions,
@@ -90,22 +81,22 @@ export function useBlockStream({
 
           return draftBlock;
 
-        case 'clear':
+        case "clear":
           return {
             ...draftBlock,
-            content: '',
-            status: 'streaming',
+            content: "",
+            status: "streaming",
           };
 
-        case 'finish':
+        case "finish":
           return {
             ...draftBlock,
-            status: 'idle',
+            status: "idle",
           };
 
         default:
           return draftBlock;
       }
     });
-  }, [streamingData, setBlock]);
+  }, [streamingData, setBlock, setUserMessageIdFromServer]);
 }
