@@ -43,6 +43,9 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const { prompt } = await request.json(); // 从请求中获取 prompt
+  if (request) {
+    return NextResponse.error();
+  }
   console.log("prompt", prompt);
   const response = await fetch("https://api.x.ai/v1/chat/completions", {
     method: "POST",
