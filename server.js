@@ -1,8 +1,6 @@
 // server.js
 const { createServer } = require('http');
-const { readFileSync } = require('fs');
 const next = require('next');
-const helmet = require('helmet');
 const cors = require('cors');
 const { parse } = require('url');
 
