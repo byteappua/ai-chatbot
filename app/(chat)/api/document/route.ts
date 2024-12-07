@@ -110,4 +110,3 @@ export async function PATCH(request: Request) {
 
   return new Response("Deleted", { status: 200 });
 }
-export const runtime = "edge";

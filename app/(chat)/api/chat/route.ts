@@ -377,4 +377,3 @@ export async function DELETE(request: Request) {
     });
   }
 }
-export const runtime = "edge";
