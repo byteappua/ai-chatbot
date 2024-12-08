@@ -1,15 +1,13 @@
-import Link from 'next/link';
-import React, { memo } from 'react';
-import ReactMarkdown, { type Components } from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import Link from "next/link";
+import React, { memo } from "react";
+import ReactMarkdown, { type Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
   const components: Partial<Components> = {
-    // @ts-expect-error
     code: ({ node, inline, className, children, ...props }) => {
-      const match = /language-(\w+)/.exec(className || '');
+      const match = /language-(\w+)/.exec(className || "");
       return !inline && match ? (
-        // @ts-expect-error
         <pre
           {...props}
           className={`${className} text-sm w-[80dvw] md:max-w-[500px] overflow-x-scroll bg-zinc-100 p-3 rounded-lg mt-2 dark:bg-zinc-800`}
@@ -55,13 +53,7 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
     },
     a: ({ node, children, ...props }) => {
       return (
-        // @ts-expect-error
-        <Link
-          className="text-blue-500 hover:underline"
-          target="_blank"
-          rel="noreferrer"
-          {...props}
-        >
+        <Link className="text-blue-500 hover:underline" target="_blank" rel="noreferrer" {...props}>
           {children}
         </Link>
       );
@@ -119,5 +111,5 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
 
 export const Markdown = memo(
   NonMemoizedMarkdown,
-  (prevProps, nextProps) => prevProps.children === nextProps.children,
+  (prevProps, nextProps) => prevProps.children === nextProps.children
 );
