@@ -310,25 +310,27 @@ export async function POST(request: Request) {
             response.messages
           );
 
-          await saveMessages({
-            messages: responseMessagesWithoutIncompleteToolCalls.map((message) => {
-              const messageId = generateUUID();
+          if (hasDb()) {
+            await saveMessages({
+              messages: responseMessagesWithoutIncompleteToolCalls.map((message) => {
+                const messageId = generateUUID();
 
-              if (message.role === "assistant") {
-                streamingData.appendMessageAnnotation({
-                  messageIdFromServer: messageId,
-                });
-              }
+                if (message.role === "assistant") {
+                  streamingData.appendMessageAnnotation({
+                    messageIdFromServer: messageId,
+                  });
+                }
 
-              return {
-                id: messageId,
-                chatId: id,
-                role: message.role,
-                content: message.content,
-                createdAt: new Date(),
-              };
-            }),
-          });
+                return {
+                  id: messageId,
+                  chatId: id,
+                  role: message.role,
+                  content: message.content,
+                  createdAt: new Date(),
+                };
+              }),
+            });
+          }
         } catch (error) {
           console.error("Failed to save chat");
         }
