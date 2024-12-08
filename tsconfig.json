@@ -27,7 +27,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "next.config.js"
+    "next.config.js",
+    "node_modules/ai/dist/index.d.ts",
+    "node_modules/framer-motion/dist/index.d.ts"
   ],
   "exclude": ["node_modules"]
 }

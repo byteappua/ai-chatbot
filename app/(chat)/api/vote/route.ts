@@ -44,4 +44,3 @@ export async function PATCH(request: Request) {
 
   return new Response("Message voted", { status: 200 });
 }
-export const runtime = "edge";

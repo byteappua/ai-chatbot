@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import type { Attachment, Message } from 'ai';
-import { useChat } from 'ai/react';
-import { AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
-import useSWR, { useSWRConfig } from 'swr';
-import { useWindowSize } from 'usehooks-ts';
+import type { Attachment, Message } from "ai";
+import { useChat } from "ai/react";
+import { AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
+import useSWR, { useSWRConfig } from "swr";
+import { useWindowSize } from "usehooks-ts";
 
-import { ChatHeader } from '@/components/chat-header';
-import type { Vote } from '@/lib/db/schema';
-import { fetcher } from '@/lib/utils';
+import { ChatHeader } from "@/components/chat-header";
+import type { Vote } from "@/lib/db/schema";
+import { fetcher } from "@/lib/utils";
 
-import { Block, type UIBlock } from './block';
-import { BlockStreamHandler } from './block-stream-handler';
-import { MultimodalInput } from './multimodal-input';
-import { Messages } from './messages';
+import { Block, type UIBlock } from "./block";
+import { BlockStreamHandler } from "./block-stream-handler";
+import { MultimodalInput } from "./multimodal-input";
+import { Messages } from "./messages";
 
 export function Chat({
   id,
@@ -43,18 +43,17 @@ export function Chat({
     body: { id, modelId: selectedModelId },
     initialMessages,
     onFinish: () => {
-      mutate('/api/history');
+      mutate("/api/history");
     },
   });
 
-  const { width: windowWidth = 1920, height: windowHeight = 1080 } =
-    useWindowSize();
+  const { width: windowWidth = 1920, height: windowHeight = 1080 } = useWindowSize();
 
   const [block, setBlock] = useState<UIBlock>({
-    documentId: 'init',
-    content: '',
-    title: '',
-    status: 'idle',
+    documentId: "init",
+    content: "",
+    title: "",
+    status: "idle",
     isVisible: false,
     boundingBox: {
       top: windowHeight / 4,
@@ -64,13 +63,32 @@ export function Chat({
     },
   });
 
-  const { data: votes } = useSWR<Array<Vote>>(
-    `/api/vote?chatId=${id}`,
-    fetcher,
-  );
+  const { data: votes } = useSWR<Array<Vote>>(`/api/vote?chatId=${id}`, fetcher);
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch("/api/demoapi", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: "Tell me a joke." }),
+      });
 
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let done = false;
+
+      while (!done && reader) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        const chunk = decoder.decode(value, { stream: true });
+        console.log(chunk); // 处理接收到的每个数据块
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <>
       <div className="flex flex-col min-w-0 h-dvh bg-background">
