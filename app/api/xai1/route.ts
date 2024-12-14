@@ -44,8 +44,8 @@ export async function GET(request: NextRequest) {
   const stream = new ReadableStream({
     async start(controller) {
       for await (const chunk of completion) {
-        const text = chunk.choices[0]?.delta?.content || "";
-        const payload = `data: ${text}\n\n`;
+        // const text = chunk.choices[0]?.delta?.content || "";
+        const payload = `data: ${chunk}\n\n`;
         controller.enqueue(new TextEncoder().encode(payload));
       }
       controller.close();
