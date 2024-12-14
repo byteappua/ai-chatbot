@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   // 获取查询参数
   const provide = url.searchParams.get("p"); // 替换 'paramName' 为你的参数名
   const apikey = url.searchParams.get("apikey"); // 替换 'paramName' 为你的参数名
-
+  console.log("apikey", apikey);
   let client = aiClient.get(provide);
   if (!client && apikey) {
     client = new OpenAI({
@@ -35,18 +35,27 @@ export async function GET(request: Request) {
       },
     ],
   });
-  const stream = new ReadableStream({
-    async start(controller) {
-      for await (const chunk of completion) {
-        // const text = chunk.choices[0]?.delta?.content || "";
-        const payload = `data: ${JSON.stringify(chunk)}\n\n`;
-        controller.enqueue(new TextEncoder().encode(payload));
-      }
-      controller.close();
-    },
-  });
 
-  return new NextResponse(stream, {
+  // console.log(completion.choices[0].message);
+  // const stream = new ReadableStream({
+  //   async start(controller) {
+  //     for await (const chunk of completion) {
+  //       // const text = chunk.choices[0]?.delta?.content || "";
+  //       const payload = `data: ${JSON.stringify(chunk)}\n\n`;
+  //       controller.enqueue(new TextEncoder().encode(payload));
+  //     }
+  //     controller.close();
+  //   },
+  // });
+
+  // return new NextResponse(stream, {
+  //   headers: {
+  //     "Content-Type": "text/event-stream",
+  //     "Cache-Control": "no-cache",
+  //     Connection: "keep-alive",
+  //   },
+  // });
+  return new NextResponse(completion.choices[0].message, {
     headers: {
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache",
