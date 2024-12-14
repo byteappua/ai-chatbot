@@ -12,18 +12,27 @@ export async function GET(request: Request) {
 
   // 获取查询参数
   const provide = url.searchParams.get("p"); // 替换 'paramName' 为你的参数名
+  const model = url.searchParams.get("m"); // 替换 'paramName' 为你的参数名
   const apikey = url.searchParams.get("apikey"); // 替换 'paramName' 为你的参数名
   console.log("apikey", apikey);
   let client = aiClient.get(provide);
   if (!client && apikey) {
-    client = new OpenAI({
-      apiKey: apikey,
-      baseURL: "https://api.x.ai/v1",
-    });
-    aiClient.set(provide, client);
+    if (provide !== "google") {
+      client = new OpenAI({
+        apiKey: apikey,
+        baseURL: "https://api.x.ai/v1",
+      });
+      aiClient.set(provide, client);
+    } else {
+      client = new OpenAI({
+        apiKey: apikey,
+        baseURL: "https://generativelanguage.googleapis.com/v1beta/",
+      });
+      aiClient.set(provide, client);
+    }
   }
   const completion = await client.chat.completions.create({
-    model: "grok-beta",
+    model: model ? model : "grok-beta",
     messages: [
       {
         role: "system",
