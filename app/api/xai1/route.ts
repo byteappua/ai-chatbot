@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
       for await (const chunk of completion) {
         const text = chunk.choices[0]?.delta?.content || "";
         const payload = `data: ${text}\n\n`;
-        controller.enqueue(chunk);
+        controller.enqueue(new TextEncoder().encode(payload));
       }
       controller.close();
     },
