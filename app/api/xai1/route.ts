@@ -41,12 +41,22 @@ export async function GET(request: NextRequest) {
     stream: true,
   });
 
-  const stream = completion.toReadableStream();
+  const stream = new ReadableStream({
+    async start(controller) {
+      for await (const chunk of completion) {
+        const text = chunk.choices[0]?.delta?.content || "";
+        const payload = `data: ${text}\n\n`;
+        controller.enqueue(new TextEncoder().encode(payload));
+      }
+      controller.close();
+    },
+  });
 
   return new NextResponse(stream, {
     headers: {
       "Content-Type": "text/event-stream",
-      "Transfer-Encoding": "chunked",
+      "Cache-Control": "no-cache",
+      Connection: "keep-alive",
     },
   });
 }
