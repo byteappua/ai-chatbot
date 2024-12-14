@@ -20,12 +20,14 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
   const session = await auth();
 
-  if (!session || !session.user) {
-    return notFound();
-  }
+  if (chat.visibility === 'private') {
+    if (!session || !session.user) {
+      return notFound();
+    }
 
-  if (session.user.id !== chat.userId) {
-    return notFound();
+    if (session.user.id !== chat.userId) {
+      return notFound();
+    }
   }
 
   const messagesFromDb = await getMessagesByChatId({
@@ -42,6 +44,8 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
       id={chat.id}
       initialMessages={convertToUIMessages(messagesFromDb)}
       selectedModelId={selectedModelId}
+      selectedVisibilityType={chat.visibility}
+      isReadonly={session?.user?.id !== chat.userId}
     />
   );
 }
