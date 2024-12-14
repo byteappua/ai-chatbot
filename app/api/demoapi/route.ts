@@ -55,7 +55,7 @@ export async function GET(request: Request) {
   //     Connection: "keep-alive",
   //   },
   // });
-  return new NextResponse(completion.choices[0].message, {
+  return new NextResponse(JSON.stringify(completion.choices[0].message), {
     headers: {
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache",
