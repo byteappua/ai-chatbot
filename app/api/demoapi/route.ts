@@ -40,6 +40,10 @@ export async function GET(request: Request) {
       },
       {
         role: "user",
+        content: "使用中文回复",
+      },
+      {
+        role: "user",
         content: [
           {
             type: "text",
