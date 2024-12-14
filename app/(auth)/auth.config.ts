@@ -10,8 +10,19 @@ export const authConfig = {
     // while this file is also used in non-Node.js environments
   ],
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
+    authorized({ auth, request: { nextUrl, headers } }) {
       const isLoggedIn = !!auth?.user;
+      const urlParams = new URLSearchParams(nextUrl.search);
+      const paramValue = urlParams.get("access"); // 替换 'paramName' 为你的参数名
+      let authorization;
+      if (paramValue) {
+        authorization = paramValue;
+      } else {
+        // 例如，获取特定的 header
+        authorization = headers.get("Authorization"); // 替换 'your-header-name' 为你的 header 名称
+      }
+      console.log("Authorization:", authorization);
+      console.log("urlParams:", urlParams);
       const isOnChat = nextUrl.pathname.startsWith("/");
       const isOnRegister = nextUrl.pathname.startsWith("/register");
       const isd = nextUrl.pathname.startsWith("/api/demoapi");
@@ -21,8 +32,8 @@ export const authConfig = {
         return Response.redirect(new URL("/", nextUrl as unknown as URL));
       }
 
-      if (isd) {
-        return true; // Always allow access to register and login pages
+      if (authorization === process.env.ACCESS_TOKEN) {
+        return true;
       }
 
       if (isOnRegister || isOnLogin) {

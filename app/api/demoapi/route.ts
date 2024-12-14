@@ -3,13 +3,26 @@ import { NextResponse, NextRequest } from "next/server";
 
 // eslint-disable-next-line import/no-named-as-default
 import OpenAI from "openai";
-const openai = new OpenAI({
-  apiKey: process.env.XAI_API_KEY,
-  baseURL: "https://api.x.ai/v1",
-});
+// 创建一个字典
+const aiClient = new Map();
 
-export async function GET() {
-  const completion = await openai.chat.completions.create({
+export async function GET(request: Request) {
+  // 获取请求的 URL
+  const url = new URL(request.url);
+
+  // 获取查询参数
+  const provide = url.searchParams.get("p"); // 替换 'paramName' 为你的参数名
+  const apikey = url.searchParams.get("apikey"); // 替换 'paramName' 为你的参数名
+
+  let client = aiClient.get(provide);
+  if (!client && apikey) {
+    client = new OpenAI({
+      apiKey: apikey,
+      baseURL: "https://api.x.ai/v1",
+    });
+    aiClient.set(provide, client);
+  }
+  const completion = await client.chat.completions.create({
     model: "grok-beta",
     messages: [
       {
@@ -42,6 +55,14 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const url = new URL(request.url);
+
+  // 获取查询参数
+  const provide = url.searchParams.get("p"); // 替换 'paramName' 为你的参数名
+  const apikey = url.searchParams.get("apikey"); // 替换 'paramName' 为你的参数名
+
+  //  let client = aiClient.get(provide);
+
   const { prompt } = await request.json(); // 从请求中获取 prompt
   if (request) {
     return NextResponse.json("hel");
@@ -51,7 +72,7 @@ export async function POST(request: NextRequest) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ` + process.env.XAI_API_KEY, // 替换为你的 OpenAI API 密钥
+      Authorization: `Bearer ` + apikey, // 替换为你的 OpenAI API 密钥
     },
     body: JSON.stringify({
       model: "grok-beta", // 或者使用其他模型
