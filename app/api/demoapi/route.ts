@@ -35,23 +35,24 @@ export async function GET(request: Request) {
       },
     ],
   });
+  const stream = new ReadableStream({
+    async start(controller) {
+      for await (const chunk of completion) {
+        // const text = chunk.choices[0]?.delta?.content || "";
+        const payload = `data: ${JSON.stringify(chunk)}\n\n`;
+        controller.enqueue(new TextEncoder().encode(payload));
+      }
+      controller.close();
+    },
+  });
 
-  console.log(completion.choices[0].message);
-  // const response = await fetch(externalStreamUrl);
-
-  // if (!response.ok) {
-  //   return NextResponse.error();
-  // }
-
-  // const stream = response.body;
-
-  // return new NextResponse(stream, {
-  //   headers: {
-  //     "Content-Type": response.headers.get("Content-Type"),
-  //     "Transfer-Encoding": "chunked",
-  //   },
-  // });
-  return NextResponse.json("hel");
+  return new NextResponse(stream, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      Connection: "keep-alive",
+    },
+  });
 }
 
 export async function POST(request: NextRequest) {
