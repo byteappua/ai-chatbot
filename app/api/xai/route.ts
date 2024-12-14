@@ -15,11 +15,11 @@ export async function GET(request: NextRequest) {
 
   //  let client = aiClient.get(provide);
 
-  const { prompt } = await request.json(); // 从请求中获取 prompt
-  if (request) {
-    return NextResponse.json("hel");
-  }
-  console.log("prompt", prompt);
+  //   const { prompt } = await request.json(); // 从请求中获取 prompt
+  //   if (request) {
+  //     return NextResponse.json("hel");
+  //   }
+  //   console.log("prompt", prompt);
   const response = await fetch("https://api.x.ai/v1/chat/completions", {
     method: "POST",
     headers: {
