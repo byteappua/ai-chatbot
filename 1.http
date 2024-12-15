@@ -5,3 +5,12 @@ Content-Type: application/json
 {
     "name": "John Doe"
 }
+
+###
+POST https://www.blackbox.ai/api/chat
+accept: */*
+content-type: application/json
+origin: https://www.blackbox.ai
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0
+
+{"messages":[{"id":"XFVwebzc2","content":"@GPT-4o nh","role":"user"}],"id":"XFVwebzc2","previewToken":null,"userId":null,"codeModelMode":true,"agentMode":{},"trendingAgentMode":{},"isMicMode":false,"userSystemPrompt":null,"maxTokens":1024,"playgroundTopP":null,"playgroundTemperature":null,"isChromeExt":false,"githubToken":"","clickedAnswer2":false,"clickedAnswer3":false,"clickedForceWebSearch":false,"visitFromDelta":false,"mobileClient":false,"userSelectedModel":"GPT-4o","validated":"00f37b34-a166-4efb-bce5-1312d87f2f94","imageGenerationMode":false,"webSearchModePrompt":false,"deepSearchMode":false}
